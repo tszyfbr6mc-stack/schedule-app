@@ -246,12 +246,18 @@
     font-style: italic;
   }
 
-  .history-btn {
+  .action-links {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 8px 14px 0;
+  }
+
+  .action-btn {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    margin: 8px 14px 0;
     background: #fff;
     border: 1.5px solid #e0e5ff;
     border-radius: 14px;
@@ -261,9 +267,18 @@
     color: var(--primary);
     cursor: pointer;
     transition: background 0.15s;
+    text-decoration: none;
   }
 
-  .history-btn:active { background: #f0f4ff; }
+  .action-btn:active { background: #f0f4ff; }
+
+  .print-btn {
+    background: var(--primary-dark);
+    border-color: var(--primary-dark);
+    color: #fff;
+  }
+
+  .print-btn:active { background: var(--primary); }
 
   .modal-overlay {
     display: none;
@@ -383,8 +398,13 @@
 
 <div class="content" id="content"></div>
 
-<div class="history-btn" onclick="openHistory()">
-  📊 지난 주 기록 보기
+<div class="action-links">
+  <a class="action-btn print-btn" href="print-4weeks.html">
+    🖨️ 4주 시간표 출력하기
+  </a>
+  <div class="action-btn" onclick="openHistory()">
+    📊 지난 주 기록 보기
+  </div>
 </div>
 
 <div class="modal-overlay" id="modalOverlay" onclick="closeHistory(event)">

@@ -182,20 +182,12 @@
 
   .task {
     display: grid;
-    grid-template-columns: 4.3mm 1fr;
-    gap: 1.4mm;
+    grid-template-columns: 1fr;
+    gap: 0.8mm;
     align-items: start;
-    min-height: 7mm;
+    min-height: 8.4mm;
     font-size: 7.7pt;
     line-height: 1.18;
-  }
-
-  .box {
-    width: 3.7mm;
-    height: 3.7mm;
-    border: 1.4px solid #555;
-    border-radius: 1px;
-    margin-top: 0.4mm;
   }
 
   .task-name {
@@ -210,13 +202,29 @@
   }
 
   .task-record {
-    display: inline-block;
-    min-width: 15mm;
+    display: flex;
+    align-items: center;
+    gap: 2mm;
+    flex-wrap: wrap;
     margin-top: 1mm;
-    border-bottom: 1px solid #666;
     color: var(--muted);
     font-size: 7pt;
     line-height: 1.2;
+  }
+
+  .box {
+    display: inline-block;
+    width: 3.2mm;
+    height: 3.2mm;
+    border: 1.1px solid #555;
+    border-radius: 1px;
+    vertical-align: -0.5mm;
+  }
+
+  .memo-line {
+    display: inline-block;
+    min-width: 18mm;
+    border-bottom: 1px solid #666;
   }
 
   .note {
@@ -290,7 +298,7 @@ const SCHEDULE = [
     day: '화', weekend: false,
     tasks: [
       { name: '수학 만점왕', detail: '2쪽', target: 2, unit: '쪽' },
-      { name: '피아노 학원', detail: '1시간', target: 60, unit: '분' },
+      { name: '피아노 학원', detail: '1시간' },
     ]
   },
   {
@@ -305,7 +313,7 @@ const SCHEDULE = [
     day: '목', weekend: false,
     tasks: [
       { name: '수학 만점왕', detail: '2쪽', target: 2, unit: '쪽' },
-      { name: '피아노 학원', detail: '1시간', target: 60, unit: '분' },
+      { name: '피아노 학원', detail: '1시간' },
     ]
   },
   {
@@ -388,11 +396,13 @@ function render(startMonday) {
         <div class="tasks">
           ${day.tasks.map(task => `
             <div class="task">
-              <div class="box"></div>
               <div>
                 <div class="task-name">${task.name}</div>
                 <div class="task-detail">${task.detail}</div>
-                ${task.target ? `<div class="task-record">/ ${task.target}${task.unit}</div>` : ''}
+                <div class="task-record">
+                  <span><span class="box"></span> 완료</span>
+                  ${task.target ? `<span><span class="box"></span> 부분</span><span class="memo-line"></span>` : ''}
+                </div>
               </div>
             </div>
           `).join('')}

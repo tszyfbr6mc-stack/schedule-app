@@ -230,6 +230,38 @@
   .task-detail { font-size: 11px; color: rgba(255,255,255,0.8); margin-top: 1px; }
   .task-progress { font-size: 11px; color: #fff; font-weight: 900; margin-top: 4px; }
 
+  .task-actions {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+  }
+
+  .task-action {
+    border: 1px solid rgba(255,255,255,0.55);
+    background: rgba(255,255,255,0.18);
+    color: #fff;
+    border-radius: 8px;
+    padding: 6px 8px;
+    font-size: 11px;
+    font-weight: 900;
+    font-family: 'Noto Sans KR', sans-serif;
+    cursor: pointer;
+  }
+
+  .task-action.active {
+    background: rgba(255,255,255,0.42);
+  }
+
+  .task-action.clear {
+    color: rgba(255,255,255,0.78);
+  }
+
+  .t-buffer .task-action {
+    border-color: #ccc;
+    background: #fff;
+    color: #999;
+  }
+
   .t-math       { background: var(--math); }
   .t-english    { background: var(--english); }
   .t-korean     { background: var(--korean); }
@@ -458,7 +490,7 @@ const SCHEDULE = [
     day: '화', eng: 'TUE', weekend: false,
     tasks: [
       { id: 'math',  icon: '🔢', name: '수학 만점왕', detail: '2쪽',  target: 2, unit: '쪽', color: 't-math'  },
-      { id: 'piano', icon: '🎹', name: '피아노 학원', detail: '1시간', target: 60, unit: '분', color: 't-piano' },
+      { id: 'piano', icon: '🎹', name: '피아노 학원', detail: '1시간', color: 't-piano' },
     ]
   },
   {
@@ -473,7 +505,7 @@ const SCHEDULE = [
     day: '목', eng: 'THU', weekend: false,
     tasks: [
       { id: 'math',  icon: '🔢', name: '수학 만점왕', detail: '2쪽',  target: 2, unit: '쪽', color: 't-math'  },
-      { id: 'piano', icon: '🎹', name: '피아노 학원', detail: '1시간', target: 60, unit: '분', color: 't-piano' },
+      { id: 'piano', icon: '🎹', name: '피아노 학원', detail: '1시간', color: 't-piano' },
     ]
   },
   {
@@ -537,60 +569,65 @@ function saveData(monday, data) {
   localStorage.setItem(weekKey(monday), JSON.stringify(data));
 }
 
-function taskAmount(task, value) {
-  if (task.target) {
-    if (value === true) return task.target;
-    const amount = Number(value);
-    return Number.isFinite(amount) ? Math.max(0, amount) : 0;
-  }
-  return value ? 1 : 0;
+function canPartial(task) {
+  return ['english', 'korean', 'math'].includes(task.id);
 }
 
-function taskRatio(task, value) {
-  if (task.target) {
-    return Math.min(taskAmount(task, value) / task.target, 1);
+function normalizeTaskRecord(task, value) {
+  if (!value) return { status: 'empty', note: '' };
+  if (value === true) return { status: 'done', note: '' };
+  if (typeof value === 'number') {
+    if (task.target && value >= task.target) return { status: 'done', note: '' };
+    return { status: 'partial', note: task.target ? `${value}/${task.target}${task.unit}` : String(value) };
   }
-  return value ? 1 : 0;
+  if (typeof value === 'object') {
+    return {
+      status: value.status || 'empty',
+      note: value.note || ''
+    };
+  }
+  return { status: 'empty', note: '' };
 }
 
 function taskStatus(task, value) {
-  const ratio = taskRatio(task, value);
-  if (ratio >= 1) return 'done';
-  if (ratio > 0) return 'partial';
-  return 'empty';
+  return normalizeTaskRecord(task, value).status;
+}
+
+function taskRatio(task, value) {
+  const record = normalizeTaskRecord(task, value);
+  if (record.status === 'done') return 1;
+  if (record.status === 'partial') return 0.5;
+  return 0;
 }
 
 function taskProgressText(task, value) {
-  if (!task.target) return '';
-  const amount = taskAmount(task, value);
-  return `${amount} / ${task.target}${task.unit}`;
+  const record = normalizeTaskRecord(task, value);
+  if (record.status === 'done') return '완료';
+  if (record.status === 'partial') return record.note ? `부분완료: ${record.note}` : '부분완료';
+  return '';
 }
 
-function editTaskAmount(monday, task, key) {
+function setTaskDone(monday, key) {
   const data = loadData(monday);
+  data[key] = { status: 'done', note: '' };
+  saveData(monday, data);
+  render();
+}
 
-  if (!task.target) {
-    data[key] = !data[key];
-    saveData(monday, data);
-    render();
-    return;
-  }
+function setTaskPartial(monday, task, key) {
+  const data = loadData(monday);
+  const current = normalizeTaskRecord(task, data[key]);
+  const note = prompt('부분완료 내용을 간단히 적어주세요.', current.status === 'partial' ? current.note : '');
+  if (note === null) return;
 
-  const current = taskAmount(task, data[key]);
-  const answer = prompt(`${task.name}\n목표: ${task.target}${task.unit}\n오늘 한 양을 입력해 주세요.`, current || '');
-  if (answer === null) return;
+  data[key] = { status: 'partial', note: note.trim() };
+  saveData(monday, data);
+  render();
+}
 
-  const amount = Math.min(Math.max(Number(answer), 0), task.target);
-  if (!Number.isFinite(amount)) {
-    alert('숫자로 입력해 주세요.');
-    return;
-  }
-
-  if (amount === 0) {
-    delete data[key];
-  } else {
-    data[key] = amount;
-  }
+function clearTaskRecord(monday, key) {
+  const data = loadData(monday);
+  delete data[key];
   saveData(monday, data);
   render();
 }
@@ -642,10 +679,26 @@ function render() {
           <div class="task-name">${task.icon} ${task.name}</div>
           <div class="task-detail">${task.detail}</div>
           ${progressText ? `<div class="task-progress">${progressText}</div>` : ''}
+          <div class="task-actions">
+            <button class="task-action done-btn${status === 'done' ? ' active' : ''}" type="button">완료</button>
+            ${canPartial(task) ? `<button class="task-action partial-btn${status === 'partial' ? ' active' : ''}" type="button">부분</button>` : ''}
+            <button class="task-action clear" type="button">지움</button>
+          </div>
         </div>
       `;
-      item.addEventListener('click', () => {
-        editTaskAmount(currentMonday, task, key);
+      item.querySelector('.done-btn').addEventListener('click', event => {
+        event.stopPropagation();
+        setTaskDone(currentMonday, key);
+      });
+      if (canPartial(task)) {
+        item.querySelector('.partial-btn').addEventListener('click', event => {
+          event.stopPropagation();
+          setTaskPartial(currentMonday, task, key);
+        });
+      }
+      item.querySelector('.clear').addEventListener('click', event => {
+        event.stopPropagation();
+        clearTaskRecord(currentMonday, key);
       });
       tasksDiv.appendChild(item);
     });

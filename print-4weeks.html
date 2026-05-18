@@ -209,6 +209,16 @@
     margin-top: 0.4mm;
   }
 
+  .task-record {
+    display: inline-block;
+    min-width: 15mm;
+    margin-top: 1mm;
+    border-bottom: 1px solid #666;
+    color: var(--muted);
+    font-size: 7pt;
+    line-height: 1.2;
+  }
+
   .note {
     margin: 0 2mm 2mm;
     padding-top: 1.2mm;
@@ -271,39 +281,39 @@ const SCHEDULE = [
   {
     day: '월', weekend: false,
     tasks: [
-      { name: '영어 리딩', detail: '1시간' },
-      { name: '국어 숙제', detail: '30분' },
-      { name: '수학 만점왕', detail: '4쪽' },
+      { name: '영어 리딩', detail: '1시간', target: 60, unit: '분' },
+      { name: '국어 숙제', detail: '30분', target: 30, unit: '분' },
+      { name: '수학 만점왕', detail: '4쪽', target: 4, unit: '쪽' },
     ]
   },
   {
     day: '화', weekend: false,
     tasks: [
-      { name: '수학 만점왕', detail: '2쪽' },
-      { name: '피아노 학원', detail: '1시간' },
+      { name: '수학 만점왕', detail: '2쪽', target: 2, unit: '쪽' },
+      { name: '피아노 학원', detail: '1시간', target: 60, unit: '분' },
     ]
   },
   {
     day: '수', weekend: false,
     tasks: [
-      { name: '영어 리딩', detail: '1시간' },
-      { name: '국어 숙제', detail: '30분' },
-      { name: '수학 만점왕', detail: '4쪽' },
+      { name: '영어 리딩', detail: '1시간', target: 60, unit: '분' },
+      { name: '국어 숙제', detail: '30분', target: 30, unit: '분' },
+      { name: '수학 만점왕', detail: '4쪽', target: 4, unit: '쪽' },
     ]
   },
   {
     day: '목', weekend: false,
     tasks: [
-      { name: '수학 만점왕', detail: '2쪽' },
-      { name: '피아노 학원', detail: '1시간' },
+      { name: '수학 만점왕', detail: '2쪽', target: 2, unit: '쪽' },
+      { name: '피아노 학원', detail: '1시간', target: 60, unit: '분' },
     ]
   },
   {
     day: '금', weekend: false,
     tasks: [
-      { name: '영어 리딩', detail: '1시간' },
+      { name: '영어 리딩', detail: '1시간', target: 60, unit: '분' },
       { name: '받아쓰기 준비', detail: '확인용' },
-      { name: '수학 만점왕', detail: '4쪽' },
+      { name: '수학 만점왕', detail: '4쪽', target: 4, unit: '쪽' },
     ]
   },
   {
@@ -382,6 +392,7 @@ function render(startMonday) {
               <div>
                 <div class="task-name">${task.name}</div>
                 <div class="task-detail">${task.detail}</div>
+                ${task.target ? `<div class="task-record">/ ${task.target}${task.unit}</div>` : ''}
               </div>
             </div>
           `).join('')}

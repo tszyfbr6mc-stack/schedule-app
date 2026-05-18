@@ -206,6 +206,7 @@
   }
 
   .task-item:active { transform: scale(0.98); }
+  .task-item.partial { box-shadow: inset 0 0 0 3px rgba(255,255,255,0.36); }
   .task-item.done { opacity: 0.55; }
 
   .task-checkbox {
@@ -227,6 +228,7 @@
   .task-text { flex: 1; }
   .task-name { font-size: 13px; font-weight: 900; color: #fff; }
   .task-detail { font-size: 11px; color: rgba(255,255,255,0.8); margin-top: 1px; }
+  .task-progress { font-size: 11px; color: #fff; font-weight: 900; margin-top: 4px; }
 
   .t-math       { background: var(--math); }
   .t-english    { background: var(--english); }
@@ -419,7 +421,7 @@
   <div class="progress-wrap">
     <div class="progress-bar" id="progressBar" style="width:0%"></div>
   </div>
-  <div class="progress-text" id="progressText">0 / 0 완료</div>
+  <div class="progress-text" id="progressText">0% 진행</div>
 </div>
 
 <div class="content" id="content"></div>
@@ -447,39 +449,39 @@ const SCHEDULE = [
   {
     day: '월', eng: 'MON', weekend: false,
     tasks: [
-      { id: 'english', icon: '📖', name: '영어 리딩', detail: '1시간', color: 't-english' },
-      { id: 'korean',  icon: '✏️', name: '국어 숙제',  detail: '30분',  color: 't-korean' },
-      { id: 'math',    icon: '🔢', name: '수학 만점왕', detail: '4쪽',   color: 't-math'  },
+      { id: 'english', icon: '📖', name: '영어 리딩', detail: '1시간', target: 60, unit: '분', color: 't-english' },
+      { id: 'korean',  icon: '✏️', name: '국어 숙제',  detail: '30분',  target: 30, unit: '분', color: 't-korean' },
+      { id: 'math',    icon: '🔢', name: '수학 만점왕', detail: '4쪽',   target: 4, unit: '쪽', color: 't-math'  },
     ]
   },
   {
     day: '화', eng: 'TUE', weekend: false,
     tasks: [
-      { id: 'math',  icon: '🔢', name: '수학 만점왕', detail: '2쪽',  color: 't-math'  },
-      { id: 'piano', icon: '🎹', name: '피아노 학원', detail: '1시간', color: 't-piano' },
+      { id: 'math',  icon: '🔢', name: '수학 만점왕', detail: '2쪽',  target: 2, unit: '쪽', color: 't-math'  },
+      { id: 'piano', icon: '🎹', name: '피아노 학원', detail: '1시간', target: 60, unit: '분', color: 't-piano' },
     ]
   },
   {
     day: '수', eng: 'WED', weekend: false,
     tasks: [
-      { id: 'english', icon: '📖', name: '영어 리딩', detail: '1시간', color: 't-english' },
-      { id: 'korean',  icon: '✏️', name: '국어 숙제',  detail: '30분',  color: 't-korean' },
-      { id: 'math',    icon: '🔢', name: '수학 만점왕', detail: '4쪽',   color: 't-math'  },
+      { id: 'english', icon: '📖', name: '영어 리딩', detail: '1시간', target: 60, unit: '분', color: 't-english' },
+      { id: 'korean',  icon: '✏️', name: '국어 숙제',  detail: '30분',  target: 30, unit: '분', color: 't-korean' },
+      { id: 'math',    icon: '🔢', name: '수학 만점왕', detail: '4쪽',   target: 4, unit: '쪽', color: 't-math'  },
     ]
   },
   {
     day: '목', eng: 'THU', weekend: false,
     tasks: [
-      { id: 'math',  icon: '🔢', name: '수학 만점왕', detail: '2쪽',  color: 't-math'  },
-      { id: 'piano', icon: '🎹', name: '피아노 학원', detail: '1시간', color: 't-piano' },
+      { id: 'math',  icon: '🔢', name: '수학 만점왕', detail: '2쪽',  target: 2, unit: '쪽', color: 't-math'  },
+      { id: 'piano', icon: '🎹', name: '피아노 학원', detail: '1시간', target: 60, unit: '분', color: 't-piano' },
     ]
   },
   {
     day: '금', eng: 'FRI', weekend: false,
     tasks: [
-      { id: 'english',   icon: '📖', name: '영어 리딩',    detail: '1시간', color: 't-english'   },
+      { id: 'english',   icon: '📖', name: '영어 리딩',    detail: '1시간', target: 60, unit: '분', color: 't-english'   },
       { id: 'dictation', icon: '🖊️', name: '받아쓰기 준비', detail: '확인용', color: 't-dictation' },
-      { id: 'math',      icon: '🔢', name: '수학 만점왕',   detail: '4쪽',   color: 't-math'      },
+      { id: 'math',      icon: '🔢', name: '수학 만점왕',   detail: '4쪽',   target: 4, unit: '쪽', color: 't-math'      },
     ]
   },
   {
@@ -535,21 +537,81 @@ function saveData(monday, data) {
   localStorage.setItem(weekKey(monday), JSON.stringify(data));
 }
 
+function taskAmount(task, value) {
+  if (task.target) {
+    if (value === true) return task.target;
+    const amount = Number(value);
+    return Number.isFinite(amount) ? Math.max(0, amount) : 0;
+  }
+  return value ? 1 : 0;
+}
+
+function taskRatio(task, value) {
+  if (task.target) {
+    return Math.min(taskAmount(task, value) / task.target, 1);
+  }
+  return value ? 1 : 0;
+}
+
+function taskStatus(task, value) {
+  const ratio = taskRatio(task, value);
+  if (ratio >= 1) return 'done';
+  if (ratio > 0) return 'partial';
+  return 'empty';
+}
+
+function taskProgressText(task, value) {
+  if (!task.target) return '';
+  const amount = taskAmount(task, value);
+  return `${amount} / ${task.target}${task.unit}`;
+}
+
+function editTaskAmount(monday, task, key) {
+  const data = loadData(monday);
+
+  if (!task.target) {
+    data[key] = !data[key];
+    saveData(monday, data);
+    render();
+    return;
+  }
+
+  const current = taskAmount(task, data[key]);
+  const answer = prompt(`${task.name}\n목표: ${task.target}${task.unit}\n오늘 한 양을 입력해 주세요.`, current || '');
+  if (answer === null) return;
+
+  const amount = Math.min(Math.max(Number(answer), 0), task.target);
+  if (!Number.isFinite(amount)) {
+    alert('숫자로 입력해 주세요.');
+    return;
+  }
+
+  if (amount === 0) {
+    delete data[key];
+  } else {
+    data[key] = amount;
+  }
+  saveData(monday, data);
+  render();
+}
+
 function render() {
   const data = loadData(currentMonday);
   const content = document.getElementById('content');
   content.innerHTML = '';
 
-  let totalTasks = 0, doneTasks = 0;
+  let totalTasks = 0, progressSum = 0;
 
   SCHEDULE.forEach((dayDef, di) => {
     const card = document.createElement('div');
     card.className = 'day-card';
 
-    const dayDone = dayDef.tasks.filter(t => data[`${di}_${t.id}`]).length;
+    const dayDone = dayDef.tasks.filter(t => taskStatus(t, data[`${di}_${t.id}`]) === 'done').length;
     const dayTotal = dayDef.tasks.length;
     totalTasks += dayTotal;
-    doneTasks += dayDone;
+    dayDef.tasks.forEach(t => {
+      progressSum += taskRatio(t, data[`${di}_${t.id}`]);
+    });
     const allDone = dayDone === dayTotal;
 
     const dateStr = formatDate(currentMonday, di);
@@ -569,21 +631,21 @@ function render() {
 
     dayDef.tasks.forEach(task => {
       const key = `${di}_${task.id}`;
-      const done = !!data[key];
+      const value = data[key];
+      const status = taskStatus(task, value);
+      const progressText = taskProgressText(task, value);
       const item = document.createElement('div');
-      item.className = `task-item ${task.color}${done ? ' done' : ''}`;
+      item.className = `task-item ${task.color}${status !== 'empty' ? ` ${status}` : ''}`;
       item.innerHTML = `
-        <div class="task-checkbox">${done ? '✓' : ''}</div>
+        <div class="task-checkbox">${status === 'done' ? '✓' : status === 'partial' ? '…' : ''}</div>
         <div class="task-text">
           <div class="task-name">${task.icon} ${task.name}</div>
           <div class="task-detail">${task.detail}</div>
+          ${progressText ? `<div class="task-progress">${progressText}</div>` : ''}
         </div>
       `;
       item.addEventListener('click', () => {
-        const d = loadData(currentMonday);
-        d[key] = !d[key];
-        saveData(currentMonday, d);
-        render();
+        editTaskAmount(currentMonday, task, key);
       });
       tasksDiv.appendChild(item);
     });
@@ -600,9 +662,9 @@ function render() {
     content.appendChild(card);
   });
 
-  const pct = totalTasks ? Math.round(doneTasks / totalTasks * 100) : 0;
+  const pct = totalTasks ? Math.round(progressSum / totalTasks * 100) : 0;
   document.getElementById('progressBar').style.width = pct + '%';
-  document.getElementById('progressText').textContent = `${doneTasks} / ${totalTasks} 완료 (${pct}%)`;
+  document.getElementById('progressText').textContent = `${pct}% 진행`;
 
   const isThisWeek = weekKey(currentMonday) === weekKey(getMondayOf(new Date()));
   document.getElementById('weekLabel').childNodes[0].textContent = isThisWeek ? '이번 주 ' : '주간 기록 ';
@@ -634,14 +696,14 @@ function openHistory() {
       const monday = new Date(parts[0], parts[1] - 1, parts[2]);
       const range = formatWeekRange(monday);
 
-      let total = 0, done = 0;
+      let total = 0, progress = 0;
       SCHEDULE.forEach((d, di) => {
         d.tasks.forEach(t => {
           total++;
-          if (data[`${di}_${t.id}`]) done++;
+          progress += taskRatio(t, data[`${di}_${t.id}`]);
         });
       });
-      const pct = total ? Math.round(done / total * 100) : 0;
+      const pct = total ? Math.round(progress / total * 100) : 0;
 
       const row = document.createElement('div');
       row.className = 'history-row';

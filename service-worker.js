@@ -1,7 +1,8 @@
-const CACHE_NAME = 'schedule-app-v2';
+const CACHE_NAME = 'schedule-app-v3';
 const APP_FILES = [
   './',
   './index.html',
+  './print-4weeks.html',
   './manifest.json',
   './icon.svg'
 ];

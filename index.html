@@ -324,22 +324,31 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 8px;
     padding: 13px 0;
     border-bottom: 1px solid #f5f5f5;
   }
 
   .history-row:last-child { border-bottom: none; }
-  .history-week { font-size: 13px; font-weight: 700; color: #333; }
+  .history-week {
+    width: 68px;
+    flex-shrink: 0;
+    font-size: 13px;
+    font-weight: 700;
+    color: #333;
+  }
 
   .history-rate {
+    width: 38px;
+    flex-shrink: 0;
     font-size: 13px;
     font-weight: 900;
     color: var(--primary);
+    text-align: right;
   }
 
   .history-bar-wrap {
     flex: 1;
-    margin: 0 12px;
     background: #f0f0f0;
     border-radius: 4px;
     height: 6px;
@@ -349,6 +358,23 @@
     height: 100%;
     background: var(--primary);
     border-radius: 4px;
+  }
+
+  .history-delete {
+    flex-shrink: 0;
+    border: 1px solid #ffd1d1;
+    background: #fff5f5;
+    color: #ff5f5f;
+    border-radius: 8px;
+    padding: 6px 8px;
+    font-size: 11px;
+    font-weight: 800;
+    font-family: 'Noto Sans KR', sans-serif;
+    cursor: pointer;
+  }
+
+  .history-delete:active {
+    background: #ffe8e8;
   }
 
   .modal-close {
@@ -623,6 +649,7 @@ function openHistory() {
         <div class="history-week">${range}</div>
         <div class="history-bar-wrap"><div class="history-bar" style="width:${pct}%"></div></div>
         <div class="history-rate">${pct}%</div>
+        <button class="history-delete" type="button" data-week-key="${k}" data-week-range="${range}">삭제</button>
       `;
       list.appendChild(row);
     });
@@ -630,6 +657,20 @@ function openHistory() {
 
   document.getElementById('modalOverlay').classList.add('open');
 }
+
+document.getElementById('historyList').addEventListener('click', event => {
+  const button = event.target.closest('.history-delete');
+  if (!button) return;
+
+  const key = button.dataset.weekKey;
+  const range = button.dataset.weekRange;
+  const ok = confirm(`${range} 기록을 삭제할까요?`);
+  if (!ok) return;
+
+  localStorage.removeItem(key);
+  openHistory();
+  render();
+});
 
 function closeHistory(e) {
   if (!e || e.target === document.getElementById('modalOverlay')) {

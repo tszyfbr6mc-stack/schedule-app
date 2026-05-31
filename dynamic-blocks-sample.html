@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>동적 블록 시간표 샘플</title>
+<style>
+  :root {
+    --primary: #5c7cfa;
+    --primary-dark: #3b5bdb;
+    --bg: #f2f5ff;
+    --card: #fff;
+    --ink: #252b3a;
+    --muted: #8a93a8;
+    --line: #e1e6f5;
+    --math: linear-gradient(135deg, #667eea, #764ba2);
+    --english: linear-gradient(135deg, #f093fb, #f5576c);
+    --korean: linear-gradient(135deg, #4facfe, #00c6fb);
+    --piano: linear-gradient(135deg, #43e97b, #38f9d7);
+    --school: linear-gradient(135deg, #ff9a9e, #fad0c4);
+    --plain: linear-gradient(135deg, #8395a7, #576574);
+  }
+
+  * {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  }
+
+  .app {
+    max-width: 520px;
+    margin: 0 auto;
+    padding-bottom: 28px;
+  }
+
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    padding: calc(48px + env(safe-area-inset-top)) 18px 16px;
+    background: var(--primary);
+    color: #fff;
+    box-shadow: 0 8px 24px rgba(92, 124, 250, 0.28);
+  }
+
+  .top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: 21px;
+    letter-spacing: 0;
+    line-height: 1.1;
+  }
+
+  .sub {
+    margin-top: 4px;
+    color: rgba(255,255,255,0.78);
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .mode-toggle {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 132px;
+    padding: 4px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.16);
+  }
+
+  .mode-toggle button {
+    height: 32px;
+    border: 0;
+    border-radius: 9px;
+    background: transparent;
+    color: rgba(255,255,255,0.74);
+    font-size: 12px;
+    font-weight: 900;
+    cursor: pointer;
+  }
+
+  .mode-toggle .active {
+    background: #fff;
+    color: var(--primary-dark);
+  }
+
+  .week-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.15);
+  }
+
+  .week-card button {
+    width: 34px;
+    height: 34px;
+    border: 0;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+    font-size: 18px;
+  }
+
+  .week-title {
+    text-align: center;
+    font-size: 14px;
+    font-weight: 900;
+  }
+
+  .week-title span {
+    display: block;
+    margin-top: 2px;
+    font-size: 11px;
+    font-weight: 700;
+    opacity: 0.76;
+  }
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 14px;
+  }
+
+  .day-card {
+    overflow: hidden;
+    border-radius: 18px;
+    background: var(--card);
+    box-shadow: 0 2px 14px rgba(38, 52, 92, 0.08);
+  }
+
+  .day-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: var(--bg);
+    flex-shrink: 0;
+  }
+
+  .badge strong {
+    font-size: 17px;
+  }
+
+  .badge span {
+    margin-top: -1px;
+    color: var(--muted);
+    font-size: 9px;
+    font-weight: 800;
+  }
+
+  .day-meta {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .date {
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 800;
+  }
+
+  .day-count {
+    margin-top: 2px;
+    color: var(--ink);
+    font-size: 13px;
+    font-weight: 900;
+  }
+
+  .day-tools {
+    display: none;
+    gap: 6px;
+  }
+
+  body.editing .day-tools {
+    display: flex;
+  }
+
+  .icon-btn {
+    width: 34px;
+    height: 34px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: #fff;
+    color: var(--primary);
+    font-size: 16px;
+    font-weight: 900;
+  }
+
+  .tasks {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px 12px 12px;
+  }
+
+  .task {
+    position: relative;
+    display: grid;
+    grid-template-columns: 28px 1fr auto;
+    gap: 10px;
+    align-items: center;
+    min-height: 66px;
+    padding: 11px 12px;
+    border-radius: 14px;
+    color: #fff;
+  }
+
+  .task.math { background: var(--math); }
+  .task.english { background: var(--english); }
+  .task.korean { background: var(--korean); }
+  .task.piano { background: var(--piano); }
+  .task.school { background: var(--school); }
+  .task.plain { background: var(--plain); }
+
+  .check {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border: 2px solid rgba(255,255,255,0.62);
+    border-radius: 8px;
+    background: rgba(255,255,255,0.18);
+    font-weight: 900;
+  }
+
+  .task-text {
+    min-width: 0;
+  }
+
+  .name {
+    font-size: 13px;
+    font-weight: 950;
+  }
+
+  .detail {
+    margin-top: 2px;
+    color: rgba(255,255,255,0.8);
+    font-size: 11px;
+    font-weight: 750;
+  }
+
+  .partial-chip {
+    display: inline-flex;
+    margin-top: 5px;
+    padding: 3px 7px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.2);
+    font-size: 10px;
+    font-weight: 900;
+  }
+
+  .task-actions {
+    display: flex;
+    gap: 5px;
+  }
+
+  .task-actions button {
+    height: 30px;
+    border: 1px solid rgba(255,255,255,0.5);
+    border-radius: 9px;
+    background: rgba(255,255,255,0.16);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 900;
+  }
+
+  .task-actions button:disabled {
+    opacity: 0.42;
+    cursor: not-allowed;
+  }
+
+  .edit-actions {
+    display: none;
+    gap: 5px;
+  }
+
+  body.editing .task-actions {
+    display: none;
+  }
+
+  body.editing .edit-actions {
+    display: flex;
+  }
+
+  .add-block {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 48px;
+    border: 1.5px dashed #c8d2f4;
+    border-radius: 14px;
+    background: #f9fbff;
+    color: var(--primary);
+    font-size: 13px;
+    font-weight: 950;
+  }
+
+  body.editing .add-block {
+    display: flex;
+  }
+
+  .sheet {
+    position: fixed;
+    inset: auto 0 0;
+    z-index: 20;
+    display: none;
+    max-width: 520px;
+    margin: 0 auto;
+    padding: 14px 16px calc(18px + env(safe-area-inset-bottom));
+    border-radius: 24px 24px 0 0;
+    background: #fff;
+    box-shadow: 0 -18px 40px rgba(33, 42, 73, 0.22);
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .sheet.open {
+    display: block;
+  }
+
+  .handle {
+    width: 42px;
+    height: 4px;
+    margin: 0 auto 14px;
+    border-radius: 2px;
+    background: #d8deee;
+  }
+
+  .sheet h2 {
+    margin: 0 0 12px;
+    font-size: 17px;
+  }
+
+  .form-grid {
+    display: grid;
+    gap: 10px;
+  }
+
+  .field label {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 900;
+  }
+
+  .field input,
+  .field select {
+    width: 100%;
+    height: 40px;
+    padding: 0 11px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    font: inherit;
+    font-size: 14px;
+    background: #fff;
+  }
+
+  .switch-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 11px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+  }
+
+  .switch-row span {
+    font-size: 13px;
+    font-weight: 900;
+  }
+
+  .switch-row input {
+    width: 22px;
+    height: 22px;
+  }
+
+  .sheet-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .sheet-actions button {
+    height: 42px;
+    border: 0;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 950;
+  }
+
+  .secondary {
+    background: #eef2ff;
+    color: var(--primary-dark);
+  }
+
+  .primary {
+    background: var(--primary);
+    color: #fff;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="header">
+    <div class="top-row">
+      <div>
+        <h1>학습 시간표</h1>
+        <div class="sub">블록을 직접 추가하고 수정하는 버전</div>
+      </div>
+      <div class="mode-toggle">
+        <button class="active" type="button" id="useMode">사용</button>
+        <button type="button" id="editMode">편집</button>
+      </div>
+    </div>
+    <div class="week-card">
+      <button type="button">‹</button>
+      <div class="week-title">이번 주<span>5/25 ~ 5/31</span></div>
+      <button type="button">›</button>
+    </div>
+  </header>
+
+  <main class="content">
+    <section class="day-card">
+      <div class="day-head">
+        <div class="badge"><strong>월</strong><span>MON</span></div>
+        <div class="day-meta">
+          <div class="date">5월 25일</div>
+          <div class="day-count">3개 블록</div>
+        </div>
+        <div class="day-tools">
+          <button class="icon-btn" type="button">＋</button>
+        </div>
+      </div>
+      <div class="tasks">
+        <div class="task english">
+          <div class="check">…</div>
+          <div class="task-text">
+            <div class="name">📖 영어 리딩</div>
+            <div class="detail">1시간</div>
+            <div class="partial-chip">부분완료: 40분</div>
+          </div>
+          <div class="task-actions">
+            <button type="button">완료</button>
+            <button type="button">부분</button>
+            <button type="button">지움</button>
+          </div>
+          <div class="edit-actions">
+            <button type="button" onclick="openSheet('영어 리딩')">수정</button>
+            <button type="button">삭제</button>
+          </div>
+        </div>
+
+        <div class="task korean">
+          <div class="check">✓</div>
+          <div class="task-text">
+            <div class="name">✏️ 국어 숙제</div>
+            <div class="detail">30분</div>
+            <div class="partial-chip">완료</div>
+          </div>
+          <div class="task-actions">
+            <button type="button">완료</button>
+            <button type="button">부분</button>
+            <button type="button">지움</button>
+          </div>
+          <div class="edit-actions">
+            <button type="button" onclick="openSheet('국어 숙제')">수정</button>
+            <button type="button">삭제</button>
+          </div>
+        </div>
+
+        <div class="task math">
+          <div class="check"></div>
+          <div class="task-text">
+            <div class="name">🔢 수학 만점왕</div>
+            <div class="detail">4쪽</div>
+          </div>
+          <div class="task-actions">
+            <button type="button">완료</button>
+            <button type="button">부분</button>
+            <button type="button">지움</button>
+          </div>
+          <div class="edit-actions">
+            <button type="button" onclick="openSheet('수학 만점왕')">수정</button>
+            <button type="button">삭제</button>
+          </div>
+        </div>
+
+        <button class="add-block" type="button" onclick="openSheet('새 블록')">＋ 이 요일에 블록 추가</button>
+      </div>
+    </section>
+
+    <section class="day-card">
+      <div class="day-head">
+        <div class="badge"><strong>화</strong><span>TUE</span></div>
+        <div class="day-meta">
+          <div class="date">5월 26일</div>
+          <div class="day-count">2개 블록</div>
+        </div>
+        <div class="day-tools">
+          <button class="icon-btn" type="button">＋</button>
+        </div>
+      </div>
+      <div class="tasks">
+        <div class="task math">
+          <div class="check"></div>
+          <div class="task-text">
+            <div class="name">🔢 수학 만점왕</div>
+            <div class="detail">2쪽</div>
+          </div>
+          <div class="task-actions">
+            <button type="button">완료</button>
+            <button type="button">부분</button>
+            <button type="button">지움</button>
+          </div>
+          <div class="edit-actions">
+            <button type="button" onclick="openSheet('수학 만점왕')">수정</button>
+            <button type="button">삭제</button>
+          </div>
+        </div>
+
+        <div class="task piano">
+          <div class="check">✓</div>
+          <div class="task-text">
+            <div class="name">🎹 피아노 학원</div>
+            <div class="detail">갔다오기</div>
+            <div class="partial-chip">완료</div>
+          </div>
+          <div class="task-actions">
+            <button type="button">완료</button>
+            <button type="button" disabled>부분</button>
+            <button type="button">지움</button>
+          </div>
+          <div class="edit-actions">
+            <button type="button" onclick="openSheet('피아노 학원')">수정</button>
+            <button type="button">삭제</button>
+          </div>
+        </div>
+
+        <button class="add-block" type="button" onclick="openSheet('새 블록')">＋ 이 요일에 블록 추가</button>
+      </div>
+    </section>
+
+    <section class="day-card">
+      <div class="day-head">
+        <div class="badge"><strong>수</strong><span>WED</span></div>
+        <div class="day-meta">
+          <div class="date">5월 27일</div>
+          <div class="day-count">새 블록 추가 가능</div>
+        </div>
+        <div class="day-tools">
+          <button class="icon-btn" type="button">＋</button>
+        </div>
+      </div>
+      <div class="tasks">
+        <button class="add-block" type="button" onclick="openSheet('새 블록')">＋ 이 요일에 블록 추가</button>
+      </div>
+    </section>
+  </main>
+</div>
+
+<section class="sheet" id="sheet">
+  <div class="handle"></div>
+  <h2 id="sheetTitle">블록 수정</h2>
+  <div class="form-grid">
+    <div class="field">
+      <label>아이콘</label>
+      <input value="📖">
+    </div>
+    <div class="field">
+      <label>블록 이름</label>
+      <input id="nameInput" value="영어 리딩">
+    </div>
+    <div class="field">
+      <label>설명</label>
+      <input value="1시간">
+    </div>
+    <div class="field">
+      <label>색상</label>
+      <select>
+        <option>분홍 - 영어</option>
+        <option>파랑 - 국어</option>
+        <option>보라 - 수학</option>
+        <option>초록 - 학원</option>
+        <option>회색 - 기타</option>
+      </select>
+    </div>
+    <label class="switch-row">
+      <span>부분완료 허용</span>
+      <input type="checkbox" checked>
+    </label>
+  </div>
+  <div class="sheet-actions">
+    <button class="secondary" type="button" onclick="closeSheet()">취소</button>
+    <button class="primary" type="button" onclick="closeSheet()">저장</button>
+  </div>
+</section>
+
+<script>
+const useMode = document.getElementById('useMode');
+const editMode = document.getElementById('editMode');
+const sheet = document.getElementById('sheet');
+const sheetTitle = document.getElementById('sheetTitle');
+const nameInput = document.getElementById('nameInput');
+
+useMode.addEventListener('click', () => {
+  document.body.classList.remove('editing');
+  useMode.classList.add('active');
+  editMode.classList.remove('active');
+});
+
+editMode.addEventListener('click', () => {
+  document.body.classList.add('editing');
+  editMode.classList.add('active');
+  useMode.classList.remove('active');
+});
+
+function openSheet(name) {
+  sheetTitle.textContent = name === '새 블록' ? '블록 추가' : '블록 수정';
+  nameInput.value = name === '새 블록' ? '' : name;
+  sheet.classList.add('open');
+}
+
+function closeSheet() {
+  sheet.classList.remove('open');
+}
+</script>
+</body>
+</html>

@@ -11,525 +11,620 @@
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon.svg">
-<link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
   :root {
     --primary: #5c7cfa;
     --primary-dark: #3b5bdb;
-    --bg: #f0f4ff;
+    --bg: #f2f5ff;
     --card: #fff;
+    --ink: #252b3a;
+    --muted: #8a93a8;
+    --line: #e1e6f5;
+    --danger: #ff5f5f;
     --math: linear-gradient(135deg, #667eea, #764ba2);
     --english: linear-gradient(135deg, #f093fb, #f5576c);
     --korean: linear-gradient(135deg, #4facfe, #00c6fb);
     --piano: linear-gradient(135deg, #43e97b, #38f9d7);
     --dictation: linear-gradient(135deg, #fa709a, #fee140);
     --school: linear-gradient(135deg, #ff9a9e, #fad0c4);
+    --plain: linear-gradient(135deg, #8395a7, #576574);
   }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
   body {
-    font-family: 'Noto Sans KR', sans-serif;
-    background: var(--bg);
+    margin: 0;
     min-height: 100vh;
-    padding-bottom: 32px;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  }
+
+  .app {
+    max-width: 560px;
+    margin: 0 auto;
+    padding-bottom: 28px;
   }
 
   .header {
-    background: var(--primary);
-    padding: calc(52px + env(safe-area-inset-top)) 20px 20px;
     position: sticky;
     top: 0;
-    z-index: 100;
-    box-shadow: 0 2px 20px rgba(92,124,250,0.3);
+    z-index: 10;
+    padding: calc(46px + env(safe-area-inset-top)) 18px 16px;
+    background: var(--primary);
+    color: #fff;
+    box-shadow: 0 8px 24px rgba(92, 124, 250, 0.28);
   }
 
-  .header-top {
+  .top-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 12px;
     margin-bottom: 14px;
   }
 
-  .app-title {
-    font-size: 20px;
-    font-weight: 900;
-    color: #fff;
+  h1 {
+    margin: 0;
+    font-size: 21px;
+    line-height: 1.1;
     letter-spacing: 0;
   }
 
-  .app-sub {
-    font-family: 'Nanum Pen Script', cursive;
-    font-size: 14px;
-    color: rgba(255,255,255,0.75);
-    margin-top: 1px;
+  .sub {
+    margin-top: 4px;
+    color: rgba(255,255,255,0.78);
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .mode-toggle {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 132px;
+    padding: 4px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.16);
+    flex-shrink: 0;
+  }
+
+  .mode-toggle button {
+    height: 32px;
+    border: 0;
+    border-radius: 9px;
+    background: transparent;
+    color: rgba(255,255,255,0.74);
+    font-size: 12px;
+    font-weight: 900;
+    cursor: pointer;
+  }
+
+  .mode-toggle button.active {
+    background: #fff;
+    color: var(--primary-dark);
   }
 
   .week-nav {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 16px;
     background: rgba(255,255,255,0.15);
-    border-radius: 14px;
-    padding: 10px 16px;
   }
 
   .week-nav button {
+    width: 34px;
+    height: 34px;
+    border: 0;
+    border-radius: 10px;
     background: rgba(255,255,255,0.2);
-    border: none;
     color: #fff;
     font-size: 18px;
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.15s;
   }
 
-  .week-nav button:active { background: rgba(255,255,255,0.35); }
-
   .week-label {
-    font-size: 15px;
-    font-weight: 900;
-    color: #fff;
-    text-align: center;
     flex: 1;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 900;
   }
 
   .week-label span {
     display: block;
-    font-size: 11px;
-    font-weight: 400;
-    opacity: 0.75;
     margin-top: 2px;
+    font-size: 11px;
+    font-weight: 700;
+    opacity: 0.76;
   }
 
   .progress-wrap {
-    margin-top: 12px;
-    background: rgba(255,255,255,0.2);
-    border-radius: 10px;
     height: 6px;
+    margin-top: 12px;
+    border-radius: 999px;
     overflow: hidden;
+    background: rgba(255,255,255,0.2);
   }
 
   .progress-bar {
+    width: 0%;
     height: 100%;
+    border-radius: 999px;
     background: #fff;
-    border-radius: 10px;
-    transition: width 0.4s ease;
+    transition: width 0.25s ease;
   }
 
   .progress-text {
-    font-size: 11px;
-    color: rgba(255,255,255,0.8);
     margin-top: 5px;
     text-align: right;
+    color: rgba(255,255,255,0.82);
+    font-size: 11px;
+    font-weight: 700;
   }
 
   .content {
-    padding: 16px 14px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
+    padding: 14px;
   }
 
   .day-card {
-    background: var(--card);
-    border-radius: 18px;
     overflow: hidden;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-    transition: transform 0.1s;
+    border-radius: 18px;
+    background: var(--card);
+    box-shadow: 0 2px 14px rgba(38, 52, 92, 0.08);
   }
 
-  .day-header {
+  .day-head {
     display: flex;
     align-items: center;
-    padding: 12px 16px;
-    border-bottom: 1.5px solid #f5f5f5;
     gap: 12px;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--line);
   }
 
-  .day-badge {
+  .badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     width: 44px;
     height: 44px;
     border-radius: 12px;
     background: var(--bg);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
     flex-shrink: 0;
   }
 
-  .day-badge .kor { font-size: 17px; font-weight: 900; color: #333; }
-  .day-badge .eng { font-size: 9px; color: #aaa; margin-top: -1px; }
-  .day-badge.weekend .kor { color: #ff6b6b; }
+  .badge strong { font-size: 17px; }
+  .badge span { margin-top: -1px; color: var(--muted); font-size: 9px; font-weight: 800; }
+  .badge.weekend strong { color: var(--danger); }
 
-  .day-date-label {
+  .day-meta {
     flex: 1;
+    min-width: 0;
+  }
+
+  .date {
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 800;
+  }
+
+  .day-count {
+    margin-top: 2px;
     font-size: 13px;
-    color: #aaa;
-    font-weight: 400;
+    font-weight: 900;
   }
 
-  .day-complete-badge {
-    font-size: 11px;
-    font-weight: 700;
-    padding: 4px 10px;
-    border-radius: 20px;
-    background: #e8fef0;
-    color: #2ecc71;
+  .day-tools {
     display: none;
+    gap: 6px;
   }
 
-  .day-complete-badge.show { display: block; }
+  body.editing .day-tools { display: flex; }
 
-  .day-tasks {
-    padding: 10px 12px;
+  .icon-btn {
+    width: 34px;
+    height: 34px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: #fff;
+    color: var(--primary);
+    font-size: 16px;
+    font-weight: 900;
+    cursor: pointer;
+  }
+
+  .tasks {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    padding: 10px 12px 12px;
   }
 
-  .task-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    border-radius: 12px;
-    padding: 11px 14px;
-    cursor: pointer;
-    transition: opacity 0.2s, transform 0.1s;
-    user-select: none;
+  .task {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    gap: 10px;
+    align-items: start;
+    min-height: 66px;
+    padding: 11px 12px;
+    border-radius: 14px;
+    color: #fff;
+    transition: opacity 0.18s, box-shadow 0.18s;
   }
 
-  .task-item:active { transform: scale(0.98); }
-  .task-item.partial { box-shadow: inset 0 0 0 3px rgba(255,255,255,0.36); }
-  .task-item.done { opacity: 0.55; }
+  .task.done { opacity: 0.64; }
+  .task.partial { box-shadow: inset 0 0 0 3px rgba(255,255,255,0.36); }
+  .task.math { background: var(--math); }
+  .task.english { background: var(--english); }
+  .task.korean { background: var(--korean); }
+  .task.piano { background: var(--piano); }
+  .task.dictation { background: var(--dictation); }
+  .task.school { background: var(--school); }
+  .task.plain { background: var(--plain); }
 
-  .task-checkbox {
-    width: 26px;
-    height: 26px;
-    border-radius: 8px;
-    border: 2.5px solid rgba(255,255,255,0.6);
-    background: rgba(255,255,255,0.2);
+  .check {
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;
-    font-size: 15px;
-    transition: all 0.2s;
+    width: 26px;
+    height: 26px;
+    border: 2px solid rgba(255,255,255,0.62);
+    border-radius: 8px;
+    background: rgba(255,255,255,0.18);
+    font-weight: 900;
   }
 
-  .task-item.done .task-checkbox { background: rgba(255,255,255,0.45); }
+  .task-text { min-width: 0; }
+  .name { font-size: 13px; font-weight: 950; }
+  .detail { margin-top: 2px; color: rgba(255,255,255,0.8); font-size: 11px; font-weight: 750; }
 
-  .task-text { flex: 1; }
-  .task-name { font-size: 13px; font-weight: 900; color: #fff; }
-  .task-detail { font-size: 11px; color: rgba(255,255,255,0.8); margin-top: 1px; }
-  .task-progress { font-size: 11px; color: #fff; font-weight: 900; margin-top: 4px; }
+  .record-chip {
+    display: inline-flex;
+    margin-top: 5px;
+    padding: 3px 7px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.2);
+    font-size: 10px;
+    font-weight: 900;
+  }
 
-  .task-actions {
+  .task-actions,
+  .edit-actions {
     display: flex;
-    gap: 6px;
+    flex-wrap: wrap;
+    gap: 5px;
     margin-top: 8px;
   }
 
-  .task-action {
-    border: 1px solid rgba(255,255,255,0.55);
-    background: rgba(255,255,255,0.18);
+  .task-actions button,
+  .edit-actions button {
+    height: 30px;
+    border: 1px solid rgba(255,255,255,0.5);
+    border-radius: 9px;
+    background: rgba(255,255,255,0.16);
     color: #fff;
-    border-radius: 8px;
-    padding: 6px 8px;
     font-size: 11px;
     font-weight: 900;
-    font-family: 'Noto Sans KR', sans-serif;
     cursor: pointer;
   }
 
-  .task-action.active {
+  .task-actions button.active,
+  .edit-actions button:active {
     background: rgba(255,255,255,0.42);
   }
 
-  .task-action.clear {
-    color: rgba(255,255,255,0.78);
+  .task-actions button:disabled {
+    opacity: 0.42;
+    cursor: not-allowed;
   }
 
-  .t-buffer .task-action {
-    border-color: #ccc;
-    background: #fff;
-    color: #999;
+  .edit-actions {
+    display: none;
   }
 
-  .t-math       { background: var(--math); }
-  .t-english    { background: var(--english); }
-  .t-korean     { background: var(--korean); }
-  .t-piano      { background: var(--piano); }
-  .t-dictation  { background: var(--dictation); }
-  .t-school     { background: var(--school); }
-  .t-buffer     { background: #f5f5f5; border: 2px dashed #ddd; }
-  .t-buffer .task-name { color: #999; }
-  .t-buffer .task-detail { color: #bbb; }
-  .t-buffer .task-checkbox { border-color: #ccc; background: #eee; }
+  body.editing .task-actions { display: none; }
+  body.editing .edit-actions { display: flex; }
 
-  .sunday-note {
-    font-size: 11.5px;
-    color: #bbb;
-    padding: 4px 14px 10px;
-    font-style: italic;
+  .add-block {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 48px;
+    border: 1.5px dashed #c8d2f4;
+    border-radius: 14px;
+    background: #f9fbff;
+    color: var(--primary);
+    font-size: 13px;
+    font-weight: 950;
+    cursor: pointer;
   }
+
+  body.editing .add-block { display: flex; }
 
   .action-links {
-    display: flex;
-    flex-direction: column;
+    display: grid;
     gap: 8px;
-    margin: 8px 14px 0;
+    padding: 0 14px 18px;
   }
 
-  .action-btn {
+  .wide-action {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    background: #fff;
+    min-height: 46px;
     border: 1.5px solid #e0e5ff;
     border-radius: 14px;
-    padding: 13px;
-    font-size: 13px;
-    font-weight: 700;
+    background: #fff;
     color: var(--primary);
-    cursor: pointer;
-    transition: background 0.15s;
     text-decoration: none;
+    font-size: 13px;
+    font-weight: 900;
+    cursor: pointer;
   }
 
-  .action-btn:active { background: #f0f4ff; }
-
-  .print-btn {
+  .print-action {
     background: var(--primary-dark);
-    border-color: var(--primary-dark);
     color: #fff;
+    border-color: var(--primary-dark);
   }
 
-  .print-btn:active { background: var(--primary); }
-
-  .modal-overlay {
-    display: none;
+  .overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.45);
-    z-index: 200;
+    z-index: 20;
+    display: none;
     align-items: flex-end;
+    background: rgba(20, 26, 45, 0.42);
   }
 
-  .modal-overlay.open { display: flex; }
+  .overlay.open { display: flex; }
 
-  .modal {
-    background: #fff;
-    border-radius: 24px 24px 0 0;
+  .sheet {
     width: 100%;
-    max-height: 70vh;
-    overflow-y: auto;
-    padding: 24px 20px calc(40px + env(safe-area-inset-bottom));
-    animation: slideUp 0.25s ease;
+    max-width: 560px;
+    margin: 0 auto;
+    padding: 14px 16px calc(18px + env(safe-area-inset-bottom));
+    border-radius: 24px 24px 0 0;
+    background: #fff;
+    box-shadow: 0 -18px 40px rgba(33, 42, 73, 0.22);
   }
 
-  @keyframes slideUp {
-    from { transform: translateY(100%); }
-    to { transform: translateY(0); }
-  }
-
-  .modal-handle {
-    width: 40px; height: 4px;
-    background: #ddd;
+  .handle {
+    width: 42px;
+    height: 4px;
+    margin: 0 auto 14px;
     border-radius: 2px;
-    margin: 0 auto 20px;
+    background: #d8deee;
   }
 
-  .modal-title {
+  .sheet h2 {
+    margin: 0 0 12px;
     font-size: 17px;
-    font-weight: 900;
-    color: #333;
-    margin-bottom: 16px;
   }
+
+  .form-grid {
+    display: grid;
+    gap: 10px;
+  }
+
+  .field label {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 900;
+  }
+
+  .field input,
+  .field select {
+    width: 100%;
+    height: 40px;
+    padding: 0 11px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: #fff;
+    font: inherit;
+    font-size: 14px;
+  }
+
+  .switch-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 11px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+  }
+
+  .switch-row span { font-size: 13px; font-weight: 900; }
+  .switch-row input { width: 22px; height: 22px; }
+
+  .sheet-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .sheet-actions button {
+    height: 42px;
+    border: 0;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 950;
+    cursor: pointer;
+  }
+
+  .secondary { background: #eef2ff; color: var(--primary-dark); }
+  .primary { background: var(--primary); color: #fff; }
+  .danger { background: #fff0f0; color: var(--danger); }
 
   .history-row {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     gap: 8px;
-    padding: 13px 0;
-    border-bottom: 1px solid #f5f5f5;
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f2fa;
   }
 
-  .history-row:last-child { border-bottom: none; }
-  .history-week {
-    width: 68px;
-    flex-shrink: 0;
-    font-size: 13px;
-    font-weight: 700;
-    color: #333;
-  }
-
-  .history-rate {
-    width: 38px;
-    flex-shrink: 0;
-    font-size: 13px;
-    font-weight: 900;
-    color: var(--primary);
-    text-align: right;
-  }
-
-  .history-bar-wrap {
-    flex: 1;
-    background: #f0f0f0;
-    border-radius: 4px;
-    height: 6px;
-  }
-
-  .history-bar {
-    height: 100%;
-    background: var(--primary);
-    border-radius: 4px;
-  }
-
-  .history-delete {
-    flex-shrink: 0;
-    border: 1px solid #ffd1d1;
-    background: #fff5f5;
-    color: #ff5f5f;
-    border-radius: 8px;
-    padding: 6px 8px;
-    font-size: 11px;
-    font-weight: 800;
-    font-family: 'Noto Sans KR', sans-serif;
-    cursor: pointer;
-  }
-
-  .history-delete:active {
-    background: #ffe8e8;
-  }
-
-  .modal-close {
-    width: 100%;
-    margin-top: 20px;
-    padding: 14px;
-    background: var(--primary);
-    color: #fff;
-    border: none;
-    border-radius: 14px;
-    font-size: 15px;
-    font-weight: 700;
-    font-family: 'Noto Sans KR', sans-serif;
-    cursor: pointer;
-  }
-
-  .empty-history {
-    text-align: center;
-    color: #bbb;
-    font-size: 13px;
-    padding: 30px 0;
-  }
+  .history-week { width: 72px; flex-shrink: 0; font-size: 13px; font-weight: 900; }
+  .history-bar-wrap { flex: 1; height: 6px; border-radius: 999px; background: #edf0f8; overflow: hidden; }
+  .history-bar { height: 100%; background: var(--primary); }
+  .history-rate { width: 40px; text-align: right; color: var(--primary); font-size: 13px; font-weight: 950; }
+  .history-delete { border: 1px solid #ffd1d1; background: #fff5f5; color: var(--danger); border-radius: 8px; padding: 6px 8px; font-size: 11px; font-weight: 900; }
+  .empty { padding: 26px 0; text-align: center; color: var(--muted); font-size: 13px; font-weight: 800; }
 </style>
 </head>
 <body>
-
-<div class="header">
-  <div class="header-top">
-    <div>
-      <div class="app-title">📅 학습 시간표</div>
-      <div class="app-sub">매일 체크하면서 실력을 키워요!</div>
+<div class="app">
+  <header class="header">
+    <div class="top-row">
+      <div>
+        <h1>학습 시간표</h1>
+        <div class="sub">매일 체크하면서 실력을 키워요!</div>
+      </div>
+      <div class="mode-toggle">
+        <button class="active" type="button" id="useMode">사용</button>
+        <button type="button" id="editMode">편집</button>
+      </div>
     </div>
-  </div>
-  <div class="week-nav">
-    <button onclick="changeWeek(-1)" aria-label="이전 주">‹</button>
-    <div class="week-label" id="weekLabel">
-      이번 주
-      <span id="weekRange"></span>
+    <div class="week-nav">
+      <button type="button" onclick="changeWeek(-1)">‹</button>
+      <div class="week-label" id="weekLabel">이번 주<span id="weekRange"></span></div>
+      <button type="button" onclick="changeWeek(1)">›</button>
     </div>
-    <button onclick="changeWeek(1)" aria-label="다음 주">›</button>
-  </div>
-  <div class="progress-wrap">
-    <div class="progress-bar" id="progressBar" style="width:0%"></div>
-  </div>
-  <div class="progress-text" id="progressText">0% 진행</div>
-</div>
+    <div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div>
+    <div class="progress-text" id="progressText">0% 진행</div>
+  </header>
 
-<div class="content" id="content"></div>
+  <main class="content" id="content"></main>
 
-<div class="action-links">
-  <a class="action-btn print-btn" href="print-4weeks.html">
-    🖨️ 4주 시간표 출력하기
-  </a>
-  <div class="action-btn" onclick="openHistory()">
-    📊 지난 주 기록 보기
+  <div class="action-links">
+    <a class="wide-action print-action" href="print-4weeks.html">4주 시간표 출력하기</a>
+    <button class="wide-action" type="button" onclick="openHistory()">지난 주 기록 보기</button>
   </div>
 </div>
 
-<div class="modal-overlay" id="modalOverlay" onclick="closeHistory(event)">
-  <div class="modal" id="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-title">📊 주간 완료 기록</div>
+<div class="overlay" id="editOverlay" onclick="closeEditSheet(event)">
+  <section class="sheet" onclick="event.stopPropagation()">
+    <div class="handle"></div>
+    <h2 id="editTitle">블록 추가</h2>
+    <div class="form-grid">
+      <div class="field">
+        <label for="taskIcon">아이콘</label>
+        <input id="taskIcon" maxlength="4" value="📖">
+      </div>
+      <div class="field">
+        <label for="taskName">블록 이름</label>
+        <input id="taskName" value="영어 리딩">
+      </div>
+      <div class="field">
+        <label for="taskDetail">설명</label>
+        <input id="taskDetail" value="1시간">
+      </div>
+      <div class="field">
+        <label for="taskColor">색상</label>
+        <select id="taskColor">
+          <option value="english">분홍 - 영어</option>
+          <option value="korean">파랑 - 국어</option>
+          <option value="math">보라 - 수학</option>
+          <option value="piano">초록 - 학원</option>
+          <option value="dictation">노랑 - 준비</option>
+          <option value="school">살구 - 학교</option>
+          <option value="plain">회색 - 기타</option>
+        </select>
+      </div>
+      <label class="switch-row">
+        <span>부분완료 허용</span>
+        <input id="taskPartial" type="checkbox" checked>
+      </label>
+    </div>
+    <div class="sheet-actions">
+      <button class="secondary" type="button" onclick="closeEditSheet()">취소</button>
+      <button class="primary" type="button" onclick="saveTaskFromSheet()">저장</button>
+    </div>
+  </section>
+</div>
+
+<div class="overlay" id="historyOverlay" onclick="closeHistory(event)">
+  <section class="sheet" onclick="event.stopPropagation()">
+    <div class="handle"></div>
+    <h2>주간 완료 기록</h2>
     <div id="historyList"></div>
-    <button class="modal-close" onclick="closeHistory()">닫기</button>
-  </div>
+    <div class="sheet-actions">
+      <button class="primary" type="button" onclick="closeHistory()">닫기</button>
+      <button class="danger" type="button" onclick="resetSchedule()">시간표 초기화</button>
+    </div>
+  </section>
 </div>
 
 <script>
-const SCHEDULE = [
-  {
-    day: '월', eng: 'MON', weekend: false,
-    tasks: [
-      { id: 'english', icon: '📖', name: '영어 리딩', detail: '1시간', target: 60, unit: '분', color: 't-english' },
-      { id: 'korean',  icon: '✏️', name: '국어 숙제',  detail: '30분',  target: 30, unit: '분', color: 't-korean' },
-      { id: 'math',    icon: '🔢', name: '수학 만점왕', detail: '4쪽',   target: 4, unit: '쪽', color: 't-math'  },
-    ]
-  },
-  {
-    day: '화', eng: 'TUE', weekend: false,
-    tasks: [
-      { id: 'math',  icon: '🔢', name: '수학 만점왕', detail: '2쪽',  target: 2, unit: '쪽', color: 't-math'  },
-      { id: 'piano', icon: '🎹', name: '피아노 학원', detail: '1시간', color: 't-piano' },
-    ]
-  },
-  {
-    day: '수', eng: 'WED', weekend: false,
-    tasks: [
-      { id: 'english', icon: '📖', name: '영어 리딩', detail: '1시간', target: 60, unit: '분', color: 't-english' },
-      { id: 'korean',  icon: '✏️', name: '국어 숙제',  detail: '30분',  target: 30, unit: '분', color: 't-korean' },
-      { id: 'math',    icon: '🔢', name: '수학 만점왕', detail: '4쪽',   target: 4, unit: '쪽', color: 't-math'  },
-    ]
-  },
-  {
-    day: '목', eng: 'THU', weekend: false,
-    tasks: [
-      { id: 'math',  icon: '🔢', name: '수학 만점왕', detail: '2쪽',  target: 2, unit: '쪽', color: 't-math'  },
-      { id: 'piano', icon: '🎹', name: '피아노 학원', detail: '1시간', color: 't-piano' },
-    ]
-  },
-  {
-    day: '금', eng: 'FRI', weekend: false,
-    tasks: [
-      { id: 'english',   icon: '📖', name: '영어 리딩',    detail: '1시간', target: 60, unit: '분', color: 't-english'   },
-      { id: 'dictation', icon: '🖊️', name: '받아쓰기 준비', detail: '확인용', color: 't-dictation' },
-      { id: 'math',      icon: '🔢', name: '수학 만점왕',   detail: '4쪽',   target: 4, unit: '쪽', color: 't-math'      },
-    ]
-  },
-  {
-    day: '토', eng: 'SAT', weekend: true,
-    tasks: [
-      { id: 'school', icon: '🏫', name: '한글학교', detail: '종일', color: 't-school' },
-    ]
-  },
-  {
-    day: '일', eng: 'SUN', weekend: true,
-    tasks: [
-      { id: 'buffer', icon: '📝', name: '밀린 숙제', detail: '필요시', color: 't-buffer' },
-    ],
-    note: '이번 주 못한 것들 마무리하는 날 💪'
-  },
+const CONFIG_KEY = 'schedule_config_v1';
+const DAYS = [
+  { day: '월', eng: 'MON', weekend: false },
+  { day: '화', eng: 'TUE', weekend: false },
+  { day: '수', eng: 'WED', weekend: false },
+  { day: '목', eng: 'THU', weekend: false },
+  { day: '금', eng: 'FRI', weekend: false },
+  { day: '토', eng: 'SAT', weekend: true },
+  { day: '일', eng: 'SUN', weekend: true }
 ];
+
+const DEFAULT_SCHEDULE = [
+  [
+    { id: '0_english', icon: '📖', name: '영어 리딩', detail: '1시간', color: 'english', allowPartial: true },
+    { id: '0_korean', icon: '✏️', name: '국어 숙제', detail: '30분', color: 'korean', allowPartial: true },
+    { id: '0_math', icon: '🔢', name: '수학 만점왕', detail: '4쪽', color: 'math', allowPartial: true }
+  ],
+  [
+    { id: '1_math', icon: '🔢', name: '수학 만점왕', detail: '2쪽', color: 'math', allowPartial: true },
+    { id: '1_piano', icon: '🎹', name: '피아노 학원', detail: '갔다오기', color: 'piano', allowPartial: false }
+  ],
+  [
+    { id: '2_english', icon: '📖', name: '영어 리딩', detail: '1시간', color: 'english', allowPartial: true },
+    { id: '2_korean', icon: '✏️', name: '국어 숙제', detail: '30분', color: 'korean', allowPartial: true },
+    { id: '2_math', icon: '🔢', name: '수학 만점왕', detail: '4쪽', color: 'math', allowPartial: true }
+  ],
+  [
+    { id: '3_math', icon: '🔢', name: '수학 만점왕', detail: '2쪽', color: 'math', allowPartial: true },
+    { id: '3_piano', icon: '🎹', name: '피아노 학원', detail: '갔다오기', color: 'piano', allowPartial: false }
+  ],
+  [
+    { id: '4_english', icon: '📖', name: '영어 리딩', detail: '1시간', color: 'english', allowPartial: true },
+    { id: '4_dictation', icon: '🖊️', name: '받아쓰기 준비', detail: '확인용', color: 'dictation', allowPartial: false },
+    { id: '4_math', icon: '🔢', name: '수학 만점왕', detail: '4쪽', color: 'math', allowPartial: true }
+  ],
+  [
+    { id: '5_school', icon: '🏫', name: '한글학교', detail: '종일', color: 'school', allowPartial: false }
+  ],
+  [
+    { id: '6_buffer', icon: '📝', name: '밀린 숙제', detail: '필요시', color: 'plain', allowPartial: false }
+  ]
+];
+
+let schedule = loadSchedule();
+let currentMonday = getMondayOf(new Date());
+let editingTarget = null;
+
+function clone(value) {
+  return JSON.parse(JSON.stringify(value));
+}
+
+function loadSchedule() {
+  const raw = localStorage.getItem(CONFIG_KEY);
+  return raw ? JSON.parse(raw) : clone(DEFAULT_SCHEDULE);
+}
+
+function saveSchedule() {
+  localStorage.setItem(CONFIG_KEY, JSON.stringify(schedule));
+}
 
 function getMondayOf(date) {
   const d = new Date(date);
@@ -540,258 +635,294 @@ function getMondayOf(date) {
   return d;
 }
 
+function addDays(date, days) {
+  const d = new Date(date);
+  d.setDate(d.getDate() + days);
+  return d;
+}
+
 function weekKey(monday) {
   return `week_${monday.getFullYear()}-${String(monday.getMonth() + 1).padStart(2, '0')}-${String(monday.getDate()).padStart(2, '0')}`;
 }
 
-function formatWeekRange(monday) {
-  const sun = new Date(monday);
-  sun.setDate(monday.getDate() + 6);
-  const fmt = d => `${d.getMonth()+1}/${d.getDate()}`;
-  return `${fmt(monday)} ~ ${fmt(sun)}`;
+function formatShort(date) {
+  return `${date.getMonth()+1}/${date.getDate()}`;
 }
 
-function formatDate(monday, offset) {
-  const d = new Date(monday);
-  d.setDate(monday.getDate() + offset);
-  return `${d.getMonth()+1}월 ${d.getDate()}일`;
+function formatDate(date) {
+  return `${date.getMonth()+1}월 ${date.getDate()}일`;
 }
 
-let currentMonday = getMondayOf(new Date());
-
-function loadData(monday) {
-  const key = weekKey(monday);
-  const raw = localStorage.getItem(key);
+function loadWeekData() {
+  const raw = localStorage.getItem(weekKey(currentMonday));
   return raw ? JSON.parse(raw) : {};
 }
 
-function saveData(monday, data) {
-  localStorage.setItem(weekKey(monday), JSON.stringify(data));
+function saveWeekData(data) {
+  localStorage.setItem(weekKey(currentMonday), JSON.stringify(data));
 }
 
-function canPartial(task) {
-  return ['english', 'korean', 'math'].includes(task.id);
-}
-
-function normalizeTaskRecord(task, value) {
+function recordOf(value) {
   if (!value) return { status: 'empty', note: '' };
   if (value === true) return { status: 'done', note: '' };
-  if (typeof value === 'number') {
-    if (task.target && value >= task.target) return { status: 'done', note: '' };
-    return { status: 'partial', note: task.target ? `${value}/${task.target}${task.unit}` : String(value) };
-  }
-  if (typeof value === 'object') {
-    return {
-      status: value.status || 'empty',
-      note: value.note || ''
-    };
-  }
-  return { status: 'empty', note: '' };
+  if (typeof value === 'number') return { status: 'partial', note: String(value) };
+  return { status: value.status || 'empty', note: value.note || '' };
 }
 
-function taskStatus(task, value) {
-  return normalizeTaskRecord(task, value).status;
-}
-
-function taskRatio(task, value) {
-  const record = normalizeTaskRecord(task, value);
+function progressValue(value) {
+  const record = recordOf(value);
   if (record.status === 'done') return 1;
   if (record.status === 'partial') return 0.5;
   return 0;
 }
 
-function taskProgressText(task, value) {
-  const record = normalizeTaskRecord(task, value);
-  if (record.status === 'done') return '완료';
-  if (record.status === 'partial') return record.note ? `부분완료: ${record.note}` : '부분완료';
-  return '';
-}
-
-function setTaskDone(monday, key) {
-  const data = loadData(monday);
-  data[key] = { status: 'done', note: '' };
-  saveData(monday, data);
-  render();
-}
-
-function setTaskPartial(monday, task, key) {
-  const data = loadData(monday);
-  const current = normalizeTaskRecord(task, data[key]);
-  const note = prompt('부분완료 내용을 간단히 적어주세요.', current.status === 'partial' ? current.note : '');
-  if (note === null) return;
-
-  data[key] = { status: 'partial', note: note.trim() };
-  saveData(monday, data);
-  render();
-}
-
-function clearTaskRecord(monday, key) {
-  const data = loadData(monday);
-  delete data[key];
-  saveData(monday, data);
-  render();
-}
-
 function render() {
-  const data = loadData(currentMonday);
+  const data = loadWeekData();
   const content = document.getElementById('content');
   content.innerHTML = '';
 
-  let totalTasks = 0, progressSum = 0;
+  let total = 0;
+  let progress = 0;
 
-  SCHEDULE.forEach((dayDef, di) => {
-    const card = document.createElement('div');
-    card.className = 'day-card';
+  schedule.forEach((tasks, dayIndex) => {
+    const dayInfo = DAYS[dayIndex];
+    const date = addDays(currentMonday, dayIndex);
+    const doneCount = tasks.filter(task => recordOf(data[task.id]).status === 'done').length;
+    total += tasks.length;
+    tasks.forEach(task => progress += progressValue(data[task.id]));
 
-    const dayDone = dayDef.tasks.filter(t => taskStatus(t, data[`${di}_${t.id}`]) === 'done').length;
-    const dayTotal = dayDef.tasks.length;
-    totalTasks += dayTotal;
-    dayDef.tasks.forEach(t => {
-      progressSum += taskRatio(t, data[`${di}_${t.id}`]);
-    });
-    const allDone = dayDone === dayTotal;
-
-    const dateStr = formatDate(currentMonday, di);
-    card.innerHTML = `
-      <div class="day-header">
-        <div class="day-badge${dayDef.weekend ? ' weekend' : ''}">
-          <span class="kor">${dayDef.day}</span>
-          <span class="eng">${dayDef.eng}</span>
+    const section = document.createElement('section');
+    section.className = 'day-card';
+    section.innerHTML = `
+      <div class="day-head">
+        <div class="badge${dayInfo.weekend ? ' weekend' : ''}">
+          <strong>${dayInfo.day}</strong>
+          <span>${dayInfo.eng}</span>
         </div>
-        <div class="day-date-label">${dateStr}</div>
-        <div class="day-complete-badge${allDone ? ' show' : ''}">✓ 완료!</div>
+        <div class="day-meta">
+          <div class="date">${formatDate(date)}</div>
+          <div class="day-count">${tasks.length ? `${doneCount}/${tasks.length} 완료` : '블록 없음'}</div>
+        </div>
+        <div class="day-tools">
+          <button class="icon-btn" type="button" aria-label="블록 추가">＋</button>
+        </div>
       </div>
+      <div class="tasks"></div>
     `;
 
-    const tasksDiv = document.createElement('div');
-    tasksDiv.className = 'day-tasks';
+    section.querySelector('.icon-btn').addEventListener('click', () => openEditSheet(dayIndex));
+    const taskWrap = section.querySelector('.tasks');
+    tasks.forEach(task => taskWrap.appendChild(renderTask({ ...task, dayIndex }, data)));
 
-    dayDef.tasks.forEach(task => {
-      const key = `${di}_${task.id}`;
-      const value = data[key];
-      const status = taskStatus(task, value);
-      const progressText = taskProgressText(task, value);
-      const item = document.createElement('div');
-      item.className = `task-item ${task.color}${status !== 'empty' ? ` ${status}` : ''}`;
-      item.innerHTML = `
-        <div class="task-checkbox">${status === 'done' ? '✓' : status === 'partial' ? '…' : ''}</div>
-        <div class="task-text">
-          <div class="task-name">${task.icon} ${task.name}</div>
-          <div class="task-detail">${task.detail}</div>
-          ${progressText ? `<div class="task-progress">${progressText}</div>` : ''}
-          <div class="task-actions">
-            <button class="task-action done-btn${status === 'done' ? ' active' : ''}" type="button">완료</button>
-            ${canPartial(task) ? `<button class="task-action partial-btn${status === 'partial' ? ' active' : ''}" type="button">부분</button>` : ''}
-            <button class="task-action clear" type="button">지움</button>
-          </div>
-        </div>
-      `;
-      item.querySelector('.done-btn').addEventListener('click', event => {
-        event.stopPropagation();
-        setTaskDone(currentMonday, key);
-      });
-      if (canPartial(task)) {
-        item.querySelector('.partial-btn').addEventListener('click', event => {
-          event.stopPropagation();
-          setTaskPartial(currentMonday, task, key);
-        });
-      }
-      item.querySelector('.clear').addEventListener('click', event => {
-        event.stopPropagation();
-        clearTaskRecord(currentMonday, key);
-      });
-      tasksDiv.appendChild(item);
-    });
+    const add = document.createElement('button');
+    add.className = 'add-block';
+    add.type = 'button';
+    add.textContent = '＋ 이 요일에 블록 추가';
+    add.addEventListener('click', () => openEditSheet(dayIndex));
+    taskWrap.appendChild(add);
 
-    card.appendChild(tasksDiv);
-
-    if (dayDef.note) {
-      const note = document.createElement('div');
-      note.className = 'sunday-note';
-      note.textContent = dayDef.note;
-      card.appendChild(note);
-    }
-
-    content.appendChild(card);
+    content.appendChild(section);
   });
 
-  const pct = totalTasks ? Math.round(progressSum / totalTasks * 100) : 0;
-  document.getElementById('progressBar').style.width = pct + '%';
+  const pct = total ? Math.round(progress / total * 100) : 0;
+  document.getElementById('progressBar').style.width = `${pct}%`;
   document.getElementById('progressText').textContent = `${pct}% 진행`;
+  document.getElementById('weekRange').textContent = `${formatShort(currentMonday)} ~ ${formatShort(addDays(currentMonday, 6))}`;
+  document.getElementById('weekLabel').childNodes[0].textContent = weekKey(currentMonday) === weekKey(getMondayOf(new Date())) ? '이번 주' : '주간 기록';
+}
 
-  const isThisWeek = weekKey(currentMonday) === weekKey(getMondayOf(new Date()));
-  document.getElementById('weekLabel').childNodes[0].textContent = isThisWeek ? '이번 주 ' : '주간 기록 ';
-  document.getElementById('weekRange').textContent = formatWeekRange(currentMonday);
+function renderTask(task, data) {
+  const record = recordOf(data[task.id]);
+  const item = document.createElement('div');
+  item.className = `task ${task.color || 'plain'}${record.status !== 'empty' ? ` ${record.status}` : ''}`;
+  const chip = record.status === 'done' ? '완료' : record.status === 'partial' ? `부분완료${record.note ? `: ${record.note}` : ''}` : '';
+  item.innerHTML = `
+    <div class="check">${record.status === 'done' ? '✓' : record.status === 'partial' ? '…' : ''}</div>
+    <div class="task-text">
+      <div class="name">${task.icon || '📝'} ${task.name}</div>
+      <div class="detail">${task.detail || ''}</div>
+      ${chip ? `<div class="record-chip">${chip}</div>` : ''}
+      <div class="task-actions">
+        <button class="done-btn${record.status === 'done' ? ' active' : ''}" type="button">완료</button>
+        <button class="partial-btn${record.status === 'partial' ? ' active' : ''}" type="button"${task.allowPartial ? '' : ' disabled'}>부분</button>
+        <button class="clear-btn" type="button">지움</button>
+      </div>
+      <div class="edit-actions">
+        <button class="edit-btn" type="button">수정</button>
+        <button class="delete-btn" type="button">삭제</button>
+      </div>
+    </div>
+  `;
+
+  item.querySelector('.done-btn').addEventListener('click', () => toggleDone(task.id));
+  item.querySelector('.partial-btn').addEventListener('click', () => {
+    if (task.allowPartial) setPartial(task.id);
+  });
+  item.querySelector('.clear-btn').addEventListener('click', () => clearTask(task.id));
+  item.querySelector('.edit-btn').addEventListener('click', () => openEditSheet(task.dayIndex, task));
+  item.querySelector('.delete-btn').addEventListener('click', () => deleteTask(task));
+  return item;
+}
+
+function taskById(id) {
+  for (let dayIndex = 0; dayIndex < schedule.length; dayIndex++) {
+    const taskIndex = schedule[dayIndex].findIndex(task => task.id === id);
+    if (taskIndex >= 0) return { task: schedule[dayIndex][taskIndex], dayIndex, taskIndex };
+  }
+  return null;
+}
+
+function toggleDone(taskId) {
+  const data = loadWeekData();
+  const record = recordOf(data[taskId]);
+  if (record.status === 'done') {
+    delete data[taskId];
+  } else {
+    data[taskId] = { status: 'done', note: '' };
+  }
+  saveWeekData(data);
+  render();
+}
+
+function setPartial(taskId) {
+  const data = loadWeekData();
+  const record = recordOf(data[taskId]);
+  const note = prompt('부분완료 내용을 간단히 적어주세요.', record.status === 'partial' ? record.note : '');
+  if (note === null) return;
+  data[taskId] = { status: 'partial', note: note.trim() };
+  saveWeekData(data);
+  render();
+}
+
+function clearTask(taskId) {
+  const data = loadWeekData();
+  delete data[taskId];
+  saveWeekData(data);
+  render();
+}
+
+function openEditSheet(dayIndex, task) {
+  editingTarget = task ? taskById(task.id) : { dayIndex, taskIndex: -1 };
+  document.getElementById('editTitle').textContent = task ? '블록 수정' : '블록 추가';
+  document.getElementById('taskIcon').value = task?.icon || '📝';
+  document.getElementById('taskName').value = task?.name || '';
+  document.getElementById('taskDetail').value = task?.detail || '';
+  document.getElementById('taskColor').value = task?.color || 'plain';
+  document.getElementById('taskPartial').checked = task ? !!task.allowPartial : true;
+  document.getElementById('editOverlay').classList.add('open');
+}
+
+function closeEditSheet(event) {
+  if (event && event.target.id !== 'editOverlay') return;
+  document.getElementById('editOverlay').classList.remove('open');
+}
+
+function saveTaskFromSheet() {
+  if (!editingTarget) return;
+  const task = {
+    id: editingTarget.taskIndex >= 0 ? schedule[editingTarget.dayIndex][editingTarget.taskIndex].id : `task-${Date.now()}`,
+    icon: document.getElementById('taskIcon').value.trim() || '📝',
+    name: document.getElementById('taskName').value.trim() || '새 블록',
+    detail: document.getElementById('taskDetail').value.trim(),
+    color: document.getElementById('taskColor').value,
+    allowPartial: document.getElementById('taskPartial').checked
+  };
+
+  if (editingTarget.taskIndex >= 0) {
+    schedule[editingTarget.dayIndex][editingTarget.taskIndex] = task;
+  } else {
+    schedule[editingTarget.dayIndex].push(task);
+  }
+
+  saveSchedule();
+  closeEditSheet();
+  render();
+}
+
+function deleteTask(task) {
+  const found = taskById(task.id);
+  if (!found) return;
+  const ok = confirm(`${task.name} 블록을 삭제할까요? 기존 주간 기록은 숨겨집니다.`);
+  if (!ok) return;
+  schedule[found.dayIndex].splice(found.taskIndex, 1);
+  saveSchedule();
+  render();
 }
 
 function changeWeek(dir) {
-  currentMonday = getMondayOf(new Date(currentMonday.getTime() + dir * 7 * 24 * 60 * 60 * 1000));
+  currentMonday = getMondayOf(addDays(currentMonday, dir * 7));
   render();
 }
 
 function openHistory() {
   const list = document.getElementById('historyList');
   list.innerHTML = '';
-
   const keys = [];
   for (let i = 0; i < localStorage.length; i++) {
-    const k = localStorage.key(i);
-    if (k.startsWith('week_')) keys.push(k);
+    const key = localStorage.key(i);
+    if (key.startsWith('week_')) keys.push(key);
   }
   keys.sort().reverse();
 
-  if (keys.length === 0) {
-    list.innerHTML = '<div class="empty-history">아직 기록이 없어요 😊</div>';
+  if (!keys.length) {
+    list.innerHTML = '<div class="empty">아직 기록이 없어요</div>';
   } else {
-    keys.forEach(k => {
-      const data = JSON.parse(localStorage.getItem(k));
-      const parts = k.replace('week_', '').split('-').map(Number);
-      const monday = new Date(parts[0], parts[1] - 1, parts[2]);
-      const range = formatWeekRange(monday);
-
-      let total = 0, progress = 0;
-      SCHEDULE.forEach((d, di) => {
-        d.tasks.forEach(t => {
-          total++;
-          progress += taskRatio(t, data[`${di}_${t.id}`]);
-        });
-      });
+    keys.forEach(key => {
+      const data = JSON.parse(localStorage.getItem(key) || '{}');
+      let total = 0;
+      let progress = 0;
+      schedule.forEach(day => day.forEach(task => {
+        total++;
+        progress += progressValue(data[task.id]);
+      }));
       const pct = total ? Math.round(progress / total * 100) : 0;
-
+      const parts = key.replace('week_', '').split('-').map(Number);
+      const monday = new Date(parts[0], parts[1] - 1, parts[2]);
+      const range = `${formatShort(monday)} ~ ${formatShort(addDays(monday, 6))}`;
       const row = document.createElement('div');
       row.className = 'history-row';
       row.innerHTML = `
         <div class="history-week">${range}</div>
         <div class="history-bar-wrap"><div class="history-bar" style="width:${pct}%"></div></div>
         <div class="history-rate">${pct}%</div>
-        <button class="history-delete" type="button" data-week-key="${k}" data-week-range="${range}">삭제</button>
+        <button class="history-delete" type="button">삭제</button>
       `;
+      row.querySelector('button').addEventListener('click', () => {
+        if (!confirm(`${range} 기록을 삭제할까요?`)) return;
+        localStorage.removeItem(key);
+        openHistory();
+        render();
+      });
       list.appendChild(row);
     });
   }
-
-  document.getElementById('modalOverlay').classList.add('open');
+  document.getElementById('historyOverlay').classList.add('open');
 }
 
-document.getElementById('historyList').addEventListener('click', event => {
-  const button = event.target.closest('.history-delete');
-  if (!button) return;
+function closeHistory(event) {
+  if (event && event.target.id !== 'historyOverlay') return;
+  document.getElementById('historyOverlay').classList.remove('open');
+}
 
-  const key = button.dataset.weekKey;
-  const range = button.dataset.weekRange;
-  const ok = confirm(`${range} 기록을 삭제할까요?`);
-  if (!ok) return;
-
-  localStorage.removeItem(key);
-  openHistory();
+function resetSchedule() {
+  if (!confirm('시간표 블록 구성을 처음 상태로 되돌릴까요? 주간 기록은 유지됩니다.')) return;
+  schedule = clone(DEFAULT_SCHEDULE);
+  saveSchedule();
+  closeHistory();
   render();
+}
+
+document.getElementById('useMode').addEventListener('click', () => {
+  document.body.classList.remove('editing');
+  document.getElementById('useMode').classList.add('active');
+  document.getElementById('editMode').classList.remove('active');
 });
 
-function closeHistory(e) {
-  if (!e || e.target === document.getElementById('modalOverlay')) {
-    document.getElementById('modalOverlay').classList.remove('open');
-  }
-}
+document.getElementById('editMode').addEventListener('click', () => {
+  document.body.classList.add('editing');
+  document.getElementById('editMode').classList.add('active');
+  document.getElementById('useMode').classList.remove('active');
+});
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {

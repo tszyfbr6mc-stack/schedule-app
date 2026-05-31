@@ -1,12 +1,12 @@
 {
   "name": "학습 시간표",
   "short_name": "시간표",
-  "description": "매일 체크하면서 쓰는 학습 시간표",
+  "description": "직접 편집하고 기록하는 학습 시간표",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#f0f4ff",
+  "background_color": "#f2f5ff",
   "theme_color": "#5c7cfa",
   "icons": [
     {

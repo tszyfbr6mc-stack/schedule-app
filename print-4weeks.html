@@ -13,14 +13,12 @@
     --primary: #5c7cfa;
   }
 
-  * {
-    box-sizing: border-box;
-  }
+  * { box-sizing: border-box; }
 
   body {
     margin: 0;
-    color: var(--ink);
     background: #eef2ff;
+    color: var(--ink);
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
   }
 
@@ -37,31 +35,10 @@
     z-index: 5;
   }
 
-  .toolbar label {
-    font-size: 14px;
-    font-weight: 700;
-  }
-
-  .toolbar input,
-  .toolbar button {
-    height: 36px;
-    border-radius: 8px;
-    border: 1px solid #cfd6e6;
-    font: inherit;
-  }
-
-  .toolbar input {
-    padding: 0 10px;
-  }
-
-  .toolbar button {
-    border: 0;
-    background: var(--primary);
-    color: #fff;
-    font-weight: 800;
-    padding: 0 14px;
-    cursor: pointer;
-  }
+  .toolbar label { font-size: 14px; font-weight: 800; }
+  .toolbar input, .toolbar button { height: 36px; border-radius: 8px; border: 1px solid #cfd6e6; font: inherit; }
+  .toolbar input { padding: 0 10px; }
+  .toolbar button { border: 0; background: var(--primary); color: #fff; font-weight: 900; padding: 0 14px; cursor: pointer; }
 
   .page {
     width: 210mm;
@@ -74,79 +51,34 @@
 
   .sheet-title {
     display: flex;
-    align-items: end;
     justify-content: space-between;
+    align-items: end;
     gap: 12px;
     margin-bottom: 4mm;
-    border-bottom: 2px solid var(--primary);
     padding-bottom: 2.5mm;
+    border-bottom: 2px solid var(--primary);
   }
 
-  h1 {
-    margin: 0;
-    font-size: 18pt;
-    line-height: 1;
-    letter-spacing: 0;
-  }
-
-  .subtitle {
-    color: var(--muted);
-    font-size: 9pt;
-    font-weight: 700;
-    white-space: nowrap;
-  }
-
-  .weeks {
-    display: grid;
-    grid-template-rows: repeat(4, 1fr);
-    gap: 3mm;
-  }
-
-  .week {
-    border: 1.4px solid var(--line);
-    border-radius: 4px;
-    overflow: hidden;
-    break-inside: avoid;
-  }
+  h1 { margin: 0; font-size: 18pt; line-height: 1; letter-spacing: 0; }
+  .subtitle { color: var(--muted); font-size: 9pt; font-weight: 800; white-space: nowrap; }
+  .weeks { display: grid; grid-template-rows: repeat(4, 1fr); gap: 3mm; }
+  .week { border: 1.4px solid var(--line); border-radius: 4px; overflow: hidden; break-inside: avoid; }
 
   .week-head {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 2mm 3mm;
     background: var(--primary);
     color: #fff;
-    padding: 2mm 3mm;
   }
 
-  .week-title {
-    font-size: 11pt;
-    font-weight: 900;
-  }
-
-  .week-range {
-    font-size: 8.5pt;
-    font-weight: 700;
-    opacity: 0.9;
-  }
-
-  .days {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-  }
-
-  .day {
-    min-height: 44mm;
-    border-right: 1px solid var(--line);
-    background: #fff;
-  }
-
-  .day:last-child {
-    border-right: 0;
-  }
-
-  .day.weekend {
-    background: #fff7f7;
-  }
+  .week-title { font-size: 11pt; font-weight: 950; }
+  .week-range { font-size: 8.5pt; font-weight: 800; opacity: 0.9; }
+  .days { display: grid; grid-template-columns: repeat(7, 1fr); }
+  .day { min-height: 44mm; border-right: 1px solid var(--line); background: #fff; }
+  .day:last-child { border-right: 0; }
+  .day.weekend { background: #fff7f7; }
 
   .day-head {
     display: flex;
@@ -158,64 +90,28 @@
     border-bottom: 1px solid var(--line);
   }
 
-  .weekend .day-head {
-    background: #ffe9e9;
-  }
-
-  .day-name {
-    font-size: 9pt;
-    font-weight: 900;
-  }
-
-  .date {
-    color: var(--muted);
-    font-size: 7.5pt;
-    font-weight: 700;
-  }
-
-  .tasks {
-    display: flex;
-    flex-direction: column;
-    gap: 1.2mm;
-    padding: 2mm;
-  }
-
-  .task {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 0.8mm;
-    align-items: start;
-    min-height: 8.4mm;
-    font-size: 7.7pt;
-    line-height: 1.18;
-  }
-
-  .task-name {
-    font-weight: 850;
-    word-break: keep-all;
-  }
-
-  .task-detail {
-    color: var(--muted);
-    font-size: 7pt;
-    margin-top: 0.4mm;
-  }
+  .weekend .day-head { background: #ffe9e9; }
+  .day-name { font-size: 9pt; font-weight: 950; }
+  .date { color: var(--muted); font-size: 7.5pt; font-weight: 800; }
+  .tasks { display: flex; flex-direction: column; gap: 1.2mm; padding: 2mm; }
+  .task { min-height: 8.4mm; font-size: 7.5pt; line-height: 1.18; }
+  .task-name { font-weight: 900; word-break: keep-all; }
+  .task-detail { margin-top: 0.4mm; color: var(--muted); font-size: 6.9pt; }
 
   .task-record {
     display: flex;
     align-items: center;
-    gap: 2mm;
     flex-wrap: wrap;
+    gap: 1.8mm;
     margin-top: 1mm;
     color: var(--muted);
-    font-size: 7pt;
-    line-height: 1.2;
+    font-size: 6.9pt;
   }
 
   .box {
     display: inline-block;
-    width: 3.2mm;
-    height: 3.2mm;
+    width: 3.1mm;
+    height: 3.1mm;
     border: 1.1px solid #555;
     border-radius: 1px;
     vertical-align: -0.5mm;
@@ -223,48 +119,18 @@
 
   .memo-line {
     display: inline-block;
-    min-width: 18mm;
+    min-width: 16mm;
     border-bottom: 1px solid #666;
   }
 
-  .note {
-    margin: 0 2mm 2mm;
-    padding-top: 1.2mm;
-    border-top: 1px dashed #d8d8d8;
-    color: var(--muted);
-    font-size: 6.8pt;
-    line-height: 1.2;
-  }
-
-  @page {
-    size: A4 portrait;
-    margin: 0;
-  }
+  @page { size: A4 portrait; margin: 0; }
 
   @media print {
-    body {
-      background: #fff;
-    }
-
-    .toolbar {
-      display: none;
-    }
-
-    .page {
-      width: 210mm;
-      min-height: 297mm;
-      margin: 0;
-      padding: 7mm;
-      box-shadow: none;
-    }
-
-    .weeks {
-      gap: 2.5mm;
-    }
-
-    .week {
-      border-color: #999;
-    }
+    body { background: #fff; }
+    .toolbar { display: none; }
+    .page { width: 210mm; min-height: 297mm; margin: 0; padding: 7mm; box-shadow: none; }
+    .weeks { gap: 2.5mm; }
+    .week { border-color: #999; }
   }
 </style>
 </head>
@@ -285,59 +151,53 @@
   </main>
 
 <script>
-const SCHEDULE = [
-  {
-    day: '월', weekend: false,
-    tasks: [
-      { name: '영어 리딩', detail: '1시간', target: 60, unit: '분' },
-      { name: '국어 숙제', detail: '30분', target: 30, unit: '분' },
-      { name: '수학 만점왕', detail: '4쪽', target: 4, unit: '쪽' },
-    ]
-  },
-  {
-    day: '화', weekend: false,
-    tasks: [
-      { name: '수학 만점왕', detail: '2쪽', target: 2, unit: '쪽' },
-      { name: '피아노 학원', detail: '1시간' },
-    ]
-  },
-  {
-    day: '수', weekend: false,
-    tasks: [
-      { name: '영어 리딩', detail: '1시간', target: 60, unit: '분' },
-      { name: '국어 숙제', detail: '30분', target: 30, unit: '분' },
-      { name: '수학 만점왕', detail: '4쪽', target: 4, unit: '쪽' },
-    ]
-  },
-  {
-    day: '목', weekend: false,
-    tasks: [
-      { name: '수학 만점왕', detail: '2쪽', target: 2, unit: '쪽' },
-      { name: '피아노 학원', detail: '1시간' },
-    ]
-  },
-  {
-    day: '금', weekend: false,
-    tasks: [
-      { name: '영어 리딩', detail: '1시간', target: 60, unit: '분' },
-      { name: '받아쓰기 준비', detail: '확인용' },
-      { name: '수학 만점왕', detail: '4쪽', target: 4, unit: '쪽' },
-    ]
-  },
-  {
-    day: '토', weekend: true,
-    tasks: [
-      { name: '한글학교', detail: '종일' },
-    ]
-  },
-  {
-    day: '일', weekend: true,
-    tasks: [
-      { name: '밀린 숙제', detail: '필요시' },
-    ],
-    note: '이번 주 못한 것들 마무리'
-  },
+const CONFIG_KEY = 'schedule_config_v1';
+const DAYS = [
+  { day: '월', eng: 'MON', weekend: false },
+  { day: '화', eng: 'TUE', weekend: false },
+  { day: '수', eng: 'WED', weekend: false },
+  { day: '목', eng: 'THU', weekend: false },
+  { day: '금', eng: 'FRI', weekend: false },
+  { day: '토', eng: 'SAT', weekend: true },
+  { day: '일', eng: 'SUN', weekend: true }
 ];
+
+const DEFAULT_SCHEDULE = [
+  [
+    { icon: '📖', name: '영어 리딩', detail: '1시간', allowPartial: true },
+    { icon: '✏️', name: '국어 숙제', detail: '30분', allowPartial: true },
+    { icon: '🔢', name: '수학 만점왕', detail: '4쪽', allowPartial: true }
+  ],
+  [
+    { icon: '🔢', name: '수학 만점왕', detail: '2쪽', allowPartial: true },
+    { icon: '🎹', name: '피아노 학원', detail: '갔다오기', allowPartial: false }
+  ],
+  [
+    { icon: '📖', name: '영어 리딩', detail: '1시간', allowPartial: true },
+    { icon: '✏️', name: '국어 숙제', detail: '30분', allowPartial: true },
+    { icon: '🔢', name: '수학 만점왕', detail: '4쪽', allowPartial: true }
+  ],
+  [
+    { icon: '🔢', name: '수학 만점왕', detail: '2쪽', allowPartial: true },
+    { icon: '🎹', name: '피아노 학원', detail: '갔다오기', allowPartial: false }
+  ],
+  [
+    { icon: '📖', name: '영어 리딩', detail: '1시간', allowPartial: true },
+    { icon: '🖊️', name: '받아쓰기 준비', detail: '확인용', allowPartial: false },
+    { icon: '🔢', name: '수학 만점왕', detail: '4쪽', allowPartial: true }
+  ],
+  [
+    { icon: '🏫', name: '한글학교', detail: '종일', allowPartial: false }
+  ],
+  [
+    { icon: '📝', name: '밀린 숙제', detail: '필요시', allowPartial: false }
+  ]
+];
+
+function loadSchedule() {
+  const raw = localStorage.getItem(CONFIG_KEY);
+  return raw ? JSON.parse(raw) : DEFAULT_SCHEDULE;
+}
 
 function getMondayOf(date) {
   const d = new Date(date);
@@ -363,6 +223,7 @@ function formatInputDate(date) {
 }
 
 function render(startMonday) {
+  const schedule = loadSchedule();
   const weeks = document.getElementById('weeks');
   weeks.innerHTML = '';
 
@@ -383,9 +244,9 @@ function render(startMonday) {
     `;
 
     const days = week.querySelector('.days');
-
-    SCHEDULE.forEach((day, dayIndex) => {
+    DAYS.forEach((day, dayIndex) => {
       const date = addDays(monday, dayIndex);
+      const tasks = schedule[dayIndex] || [];
       const dayEl = document.createElement('div');
       dayEl.className = `day${day.weekend ? ' weekend' : ''}`;
       dayEl.innerHTML = `
@@ -394,24 +255,21 @@ function render(startMonday) {
           <div class="date">${formatShort(date)}</div>
         </div>
         <div class="tasks">
-          ${day.tasks.map(task => `
+          ${tasks.map(task => `
             <div class="task">
-              <div>
-                <div class="task-name">${task.name}</div>
-                <div class="task-detail">${task.detail}</div>
-                <div class="task-record">
-                  <span><span class="box"></span> 완료</span>
-                  ${task.target ? `<span><span class="box"></span> 부분</span><span class="memo-line"></span>` : ''}
-                </div>
+              <div class="task-name">${task.icon || '📝'} ${task.name}</div>
+              <div class="task-detail">${task.detail || ''}</div>
+              <div class="task-record">
+                <span><span class="box"></span> 완료</span>
+                <span><span class="box"></span> 부분</span>
+                <span class="memo-line"></span>
               </div>
             </div>
           `).join('')}
         </div>
-        ${day.note ? `<div class="note">${day.note}</div>` : ''}
       `;
       days.appendChild(dayEl);
     });
-
     weeks.appendChild(week);
   }
 }
